@@ -6,7 +6,7 @@ contract Crud {
         string name;
     }
     User[] public users;
-    uint256 public nextId;
+    uint256 public nextId = 1;
 
     function create(string memory name) public {
         users.push(User(nextId, name));
@@ -14,61 +14,26 @@ contract Crud {
     }
 
     function read(uint256 id) public view returns (uint256, string memory) {
-        for (uint256 i = 0; i < users.length; i++) {
-            if (users[i].id == id) {
-                return (users[i].id, users[i].name);
-            }
-        }
+        uint256 i = find(id);
+        return (users[i].id, users[i].name);
     }
 
-    function update(uint256 id, string memory _name) public {
-        for (uint256 i = 0; i < users.length; i++) {
-            if (users[i].id == id) {
-                users[i].name = _name;
-            }
-        }
+    function update(uint256 id, string memory name) public {
+        uint256 i = find(id);
+        users[i].name = name;
     }
 
-    function delet(uint256 id) public {
-        delete users[id];
+    function destroy(uint256 id) public {
+        uint256 i = find(id);
+        delete users[i];
+    }
+
+    function find(uint256 id) internal view returns (uint256) {
+        for (uint256 i = 0; i < users.length; i++) {
+            if (users[i].id == id) {
+                return i;
+            }
+        }
+        revert("User does not exist!");
     }
 }
-
-// contract Crud {
-//   struct User {
-//     uint id;
-//     string name;
-//   }
-//   User[] public users;
-//   uint public nextId = 1;
-
-//   function create(string memory name) public {
-//     users.push(User(nextId, name));
-//     nextId++;
-//   }
-
-//   function read(uint id) view public returns(uint, string memory) {
-//     uint i = find(id);
-//     return(users[i].id, users[i].name);
-//   }
-
-//   function update(uint id, string memory name) public {
-//     uint i = find(id);
-//     users[i].name = name;
-//   }
-
-//   function destroy(uint id) public {
-//     uint i = find(id);
-//     delete users[i];
-//   }
-
-//   function find(uint id) view internal returns(uint) {
-//     for(uint i = 0; i < users.length; i++) {
-//       if(users[i].id == id) {
-//         return i;
-//       }
-//     }
-//     revert('User does not exist!');
-//   }
-
-// }
